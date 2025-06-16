@@ -1,21 +1,54 @@
 "use client"
 
-import { Card } from "@/components/ui/card"
+import { useState } from "react"
 import { cn } from "@/lib/utils"
+import { KanbanColumn } from "./kanban-column"
+import { Task, User } from "@/types/task"
 
-interface Task {
-  id: string
-  title: string
-  description?: string
-  status: "todo" | "in-progress" | "done"
-}
+const users: User[] = [
+  { id: "1", name: "John Doe", avatar: "https://github.com/shadcn.png" },
+  { id: "2", name: "Jane Smith", avatar: "https://github.com/shadcn.png" },
+  { id: "3", name: "Bob Johnson", avatar: "https://github.com/shadcn.png" },
+]
+
+const initialTasks: Task[] = [
+  {
+    id: "1",
+    title: "Design new dashboard",
+    description: "Create wireframes and mockups for the new dashboard",
+    status: "todo",
+    assignee: users[0],
+  },
+  {
+    id: "2",
+    title: "Implement authentication",
+    description: "Set up NextAuth.js with Google provider",
+    status: "in-progress",
+    assignee: users[1],
+  },
+  {
+    id: "3",
+    title: "Setup project structure",
+    description: "Initialize Next.js project with TypeScript",
+    status: "done",
+  },
+]
 
 interface BoardProps {
-  tasks?: Task[]
   className?: string
 }
 
-export function Board({ tasks = [], className }: BoardProps) {
+export function Board({ className }: BoardProps) {
+  const [tasks, setTasks] = useState<Task[]>(initialTasks)
+
+  const handleAssigneeChange = (taskId: string, assignee: User | null) => {
+    setTasks(tasks =>
+      tasks.map(task =>
+        task.id === taskId ? { ...task, assignee: assignee || undefined } : task
+      )
+    )
+  }
+
   const columns = [
     { id: "todo", title: "Todo" },
     { id: "in-progress", title: "In Progress" },
@@ -25,28 +58,14 @@ export function Board({ tasks = [], className }: BoardProps) {
   return (
     <div className={cn("grid grid-cols-1 md:grid-cols-3 gap-4", className)}>
       {columns.map((column) => (
-        <div key={column.id} className="flex flex-col gap-4">
-          <div className="flex items-center justify-between">
-            <h3 className="font-semibold">{column.title}</h3>
-            <span className="text-sm text-muted-foreground">
-              {tasks.filter((task) => task.status === column.id).length}
-            </span>
-          </div>
-          <div className="flex flex-col gap-2">
-            {tasks
-              .filter((task) => task.status === column.id)
-              .map((task) => (
-                <Card key={task.id} className="p-4">
-                  <h4 className="font-medium">{task.title}</h4>
-                  {task.description && (
-                    <p className="text-sm text-muted-foreground mt-1">
-                      {task.description}
-                    </p>
-                  )}
-                </Card>
-              ))}
-          </div>
-        </div>
+        <KanbanColumn
+          key={column.id}
+          id={column.id}
+          title={column.title}
+          tasks={tasks.filter((task) => task.status === column.id)}
+          onAssigneeChange={handleAssigneeChange}
+          users={users}
+        />
       ))}
     </div>
   )
