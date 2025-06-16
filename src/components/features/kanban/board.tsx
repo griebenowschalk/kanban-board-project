@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { cn } from "@/lib/utils"
 import { KanbanColumn } from "./kanban-column"
-import { Task, User } from "@/types/task"
+import { Task, TaskStatus, User } from "@/types/task"
 
 const users: User[] = [
   { id: "1", name: "John Doe", avatar: "https://github.com/shadcn.png" },
@@ -49,6 +49,22 @@ export function Board({ className }: BoardProps) {
     )
   }
 
+  const handleCreateTask = (
+    columnId: string,
+    values: { title: string; description?: string; assignee?: User | null }
+  ) => {
+    setTasks(tasks => [
+      ...tasks,
+      {
+        id: (tasks.length + 1).toString(),
+        title: values.title,
+        description: values.description,
+        status: columnId as TaskStatus,
+        assignee: values.assignee || undefined,
+      },
+    ])
+  }
+
   const columns = [
     { id: "todo", title: "Todo" },
     { id: "in-progress", title: "In Progress" },
@@ -56,7 +72,7 @@ export function Board({ className }: BoardProps) {
   ]
 
   return (
-    <div className={cn("grid grid-cols-1 md:grid-cols-3 gap-4", className)}>
+    <div className={cn("grid grid-cols-1 md:grid-cols-3 gap-4 relative", className)}>
       {columns.map((column) => (
         <KanbanColumn
           key={column.id}
@@ -65,6 +81,7 @@ export function Board({ className }: BoardProps) {
           tasks={tasks.filter((task) => task.status === column.id)}
           onAssigneeChange={handleAssigneeChange}
           users={users}
+          onCreateTask={handleCreateTask}
         />
       ))}
     </div>

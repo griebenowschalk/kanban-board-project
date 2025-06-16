@@ -16,9 +16,10 @@ interface TaskCardProps {
   className?: string
   onAssigneeChange?: (taskId: string, assignee: User | null) => void
   users: User[]
+  onEdit?: (task: Task) => void
 }
 
-export function TaskCard({ task, className, onAssigneeChange, users }: TaskCardProps) {
+export function TaskCard({ task, className, onAssigneeChange, users, onEdit }: TaskCardProps) {
   return (
     <Card className={className}>
       <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
@@ -29,8 +30,8 @@ export function TaskCard({ task, className, onAssigneeChange, users }: TaskCardP
               <MoreHorizontal className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="!bg-white z-50 border shadow-md">
-            <DropdownMenuItem>Edit</DropdownMenuItem>
+          <DropdownMenuContent align="end" className="bg-white dark:bg-zinc-950 z-50 border shadow-md">
+            <DropdownMenuItem onClick={() => onEdit?.(task)}>Edit</DropdownMenuItem>
             <DropdownMenuItem>Delete</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
