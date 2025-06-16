@@ -1,6 +1,27 @@
-import { Button } from "@/components/ui/button"
 import { Container } from "@/components/ui/container"
 import { Header } from "@/components/header"
+import { Board } from "@/components/features/kanban/board"
+
+const sampleTasks = [
+  {
+    id: "1",
+    title: "Design new dashboard",
+    description: "Create wireframes and mockups for the new dashboard",
+    status: "todo" as const,
+  },
+  {
+    id: "2",
+    title: "Implement authentication",
+    description: "Set up NextAuth.js with Google provider",
+    status: "in-progress" as const,
+  },
+  {
+    id: "3",
+    title: "Setup project structure",
+    description: "Initialize Next.js project with TypeScript",
+    status: "done" as const,
+  },
+]
 
 export default function Home() {
   return (
@@ -16,8 +37,8 @@ export default function Home() {
               A modern task management application built with Next.js and shadcn/ui.
             </p>
           </div>
-          <div className="flex gap-4 mt-6">
-            <Button>Click me!</Button>
+          <div className="mt-8">
+            <Board tasks={sampleTasks} />
           </div>
         </Container>
       </main>
