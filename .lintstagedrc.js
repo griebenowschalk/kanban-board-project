@@ -5,7 +5,9 @@ const buildEslintCommand = (filenames) =>
     .map((f) => path.relative(process.cwd(), f))
     .join(' --file ')}`
 
-export default {
+const config = {
   '*.{js,jsx,ts,tsx}': [buildEslintCommand],
   '*.{json,md}': ['prettier --write']
-} 
+}
+
+export default config 
