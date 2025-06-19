@@ -11,6 +11,7 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useEffect } from "react"
 import { AssigneeSelect } from "@/components/features/kanban/assignee-select"
+import { users } from "@/lib/data/users"
 
 const taskSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -24,12 +25,11 @@ interface TaskDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   onSubmit: (values: { title: string; description?: string; assignee?: User | null }) => void
-  users: User[]
   initialValues?: Partial<Task>
   trigger?: React.ReactNode
 }
 
-export function TaskDialog({ open, onOpenChange, onSubmit, users, initialValues, trigger }: TaskDialogProps) {
+export function TaskDialog({ open, onOpenChange, onSubmit, initialValues, trigger }: TaskDialogProps) {
   const {
     register,
     handleSubmit,
@@ -85,7 +85,6 @@ export function TaskDialog({ open, onOpenChange, onSubmit, users, initialValues,
           <div className="space-y-2">
             <Label htmlFor="assignee">Assignee</Label>
             <AssigneeSelect
-              users={users}
               value={assigneeId}
               onChange={val => setValue("assignee", val === "unassigned" ? "" : val)}
             />

@@ -11,7 +11,6 @@ interface KanbanColumnProps {
   tasks: Task[];
   className?: string;
   onAssigneeChange?: (taskId: string, assignee: User | null) => void;
-  users: User[];
   onCreateTask: (
     columnId: string,
     values: { title: string; description?: string; assignee?: User | null }
@@ -25,7 +24,6 @@ export function KanbanColumn({
   tasks,
   className,
   onAssigneeChange,
-  users,
   onCreateTask,
   onEditTask,
 }: KanbanColumnProps) {
@@ -55,7 +53,7 @@ export function KanbanColumn({
       <div className="flex items-center justify-between mb-2">
         <h3 className="font-semibold">{title}</h3>
         <Button
-          variant="outline"
+          variant="ghost"
           size="sm"
           className="flex items-center gap-2"
           onClick={() => {
@@ -73,7 +71,6 @@ export function KanbanColumn({
             key={task.id}
             task={task}
             onAssigneeChange={onAssigneeChange}
-            users={users}
             onEdit={handleEdit}
           />
         ))}
@@ -87,7 +84,6 @@ export function KanbanColumn({
           }
         }}
         onSubmit={editingTask ? handleEditSubmit : handleCreate}
-        users={users}
         initialValues={editingTask || undefined}
       />
     </div>

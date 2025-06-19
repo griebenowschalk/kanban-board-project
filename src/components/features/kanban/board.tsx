@@ -4,12 +4,7 @@ import { useState } from "react"
 import { cn } from "@/lib/utils"
 import { KanbanColumn } from "./kanban-column"
 import { Task, TaskStatus, User } from "@/types/task"
-
-const users: User[] = [
-  { id: "1", name: "John Doe", avatar: "https://github.com/shadcn.png" },
-  { id: "2", name: "Jane Smith", avatar: "https://github.com/shadcn.png" },
-  { id: "3", name: "Bob Johnson", avatar: "https://github.com/shadcn.png" },
-]
+import { users } from "@/lib/data/users"
 
 const initialTasks: Task[] = [
   {
@@ -80,7 +75,6 @@ export function Board({ className }: BoardProps) {
           title={column.title}
           tasks={tasks.filter((task) => task.status === column.id)}
           onAssigneeChange={handleAssigneeChange}
-          users={users}
           onCreateTask={handleCreateTask}
         />
       ))}

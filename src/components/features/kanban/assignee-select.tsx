@@ -1,4 +1,3 @@
-import { User } from "@/types/task";
 import {
   Select,
   SelectContent,
@@ -6,9 +5,9 @@ import {
   SelectTrigger,
 } from "@/components/ui/select";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { users } from "@/lib/data/users";
 
 interface AssigneeSelectProps {
-  users: User[];
   value?: string;
   onChange?: (value: string) => void;
   className?: string;
@@ -16,7 +15,6 @@ interface AssigneeSelectProps {
 }
 
 export function AssigneeSelect({
-  users,
   value,
   onChange,
   className,
