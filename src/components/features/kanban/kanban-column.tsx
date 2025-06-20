@@ -1,21 +1,19 @@
+"use client"
+
 import { TaskCard } from "./task-card";
 import { Task, User } from "@/types/task";
 import { useState } from "react";
 import { TaskDialog } from "@/components/features/kanban/task-dialog";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { createTask } from "@/lib/actions/tasks";
+import { useTransition } from "react";
 
 interface KanbanColumnProps {
   id: string;
   title: string;
   tasks: Task[];
   className?: string;
-  onAssigneeChange?: (taskId: string, assignee: User | null) => void;
-  onCreateTask: (
-    columnId: string,
-    values: { title: string; description?: string; assignee?: User | null }
-  ) => void;
-  onEditTask?: (taskId: string, values: { title: string; description?: string; assignee?: User | null }) => void;
 }
 
 export function KanbanColumn({
@@ -23,31 +21,21 @@ export function KanbanColumn({
   title,
   tasks,
   className,
-  onAssigneeChange,
-  onCreateTask,
-  onEditTask,
 }: KanbanColumnProps) {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [isPending, startTransition] = useTransition();
 
-  const handleCreate = (values: { title: string; description?: string; assignee?: User | null }) => {
-    onCreateTask(id, values);
-    setDialogOpen(false);
+  const handleCreateTask = (values: { title: string; description?: string; assignee?: User | null }) => {
+    startTransition(async () => {
+      await createTask(id, {
+        title: values.title,
+        description: values.description,
+        assigneeId: values.assignee?.id || null,
+      });
+      setDialogOpen(false);
+    });
   };
-
-  const handleEdit = (task: Task) => {
-    setEditingTask(task);
-    setDialogOpen(true);
-  };
-
-  const handleEditSubmit = (values: { title: string; description?: string; assignee?: User | null }) => {
-    if (editingTask && onEditTask) {
-      onEditTask(editingTask.id, values);
-    }
-    setDialogOpen(false);
-    setEditingTask(null);
-  };
-
+  console.log(dialogOpen);
   return (
     <div className={className}>
       <div className="flex items-center justify-between mb-2">
@@ -56,10 +44,8 @@ export function KanbanColumn({
           variant="ghost"
           size="sm"
           className="flex items-center gap-2"
-          onClick={() => {
-            setDialogOpen(true);
-            setEditingTask(null);
-          }}
+          onClick={() => setDialogOpen(true)}
+          disabled={isPending}
         >
           <Plus className="h-4 w-4" />
           New Task
@@ -70,8 +56,6 @@ export function KanbanColumn({
           <TaskCard
             key={task.id}
             task={task}
-            onAssigneeChange={onAssigneeChange}
-            onEdit={handleEdit}
           />
         ))}
       </div>
@@ -79,12 +63,9 @@ export function KanbanColumn({
         open={dialogOpen}
         onOpenChange={(open) => {
           setDialogOpen(open);
-          if (!open) {
-            setEditingTask(null);
-          }
         }}
-        onSubmit={editingTask ? handleEditSubmit : handleCreate}
-        initialValues={editingTask || undefined}
+        onSubmit={handleCreateTask}
+        initialValues={undefined}
       />
     </div>
   );
